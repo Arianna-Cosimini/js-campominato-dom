@@ -1,9 +1,14 @@
 
 
 let userChoice;
+let score = 0;
+let gameOver = false;
 
 const myButton = document.querySelector("#btn-play");
 myButton.addEventListener("click", function () {
+
+    gameOver = false;
+
     // Ottenere il valore della scelta dell'utente
     userChoice = document.querySelector("select").value;
 
@@ -20,16 +25,19 @@ myButton.addEventListener("click", function () {
     const randomNumbersArray = getRandomNumbersArray(gridSize);
 
     // Array con le posizioni delle bombe
-    const bombPositions = getGenerateRandomBomb();
-
+    const bombPositions = generateBombPositions(gridSize, 16);
+    // resetto il puteggio
+    score = 0;
 
     // Creare e aggiungere gli elementi della griglia al DOM
     for (let i = 0; i < gridSize; i++) {
-        newClass(gridElement, randomNumbersArray, i, userChoice, bombPositions);
+        newClass(gridElement, randomNumbersArray, i, userChoice, bombPositions, gridSize);
     }
+
+
 });
 
-function newClass(gridElement, randomNumbersArray, i, userChoice, bombPositions) {
+function newClass(gridElement, randomNumbersArray, i, userChoice, bombPositions, gridSize) {
     const newElement = document.createElement("div");
     newElement.classList.add("square");
     newElement.innerText = randomNumbersArray[i];
@@ -45,21 +53,45 @@ function newClass(gridElement, randomNumbersArray, i, userChoice, bombPositions)
 
 
 
-    // Aggiungere un event listener per il clic dell'utente
-    newElement.addEventListener("click", function () {
+    newElement.addEventListener("click", function removeClick() {
+
+        if (gameOver) {
+            alert("Il gioco è già finito. Inizia una nuova partita.");
+            return; 
+        }
+
+
+        function revealMines(gridElement, bombPositions) {
+            bombPositions.forEach(position => {
+                const bombElement = gridElement.children[position];
+                bombElement.innerText = "💣";
+                bombElement.classList.add("bomb");
+            });
+        }
+
+        // controllo se la cella corrente è una mina
+        if (bombPositions.includes(i)) {
+            revealMines(gridElement, bombPositions);
+            alert("Partita terminata. Hai perso! Punteggio:" + score);
+           
+            gameOver = true; 
+        } else {
+
+            score++
+
+        } if (score === gridSize - bombPositions.length) {
+            console.log("Hai vinto! punteggio:" + score);
+            alert("Hai vinto!");
+            gameOver = true;
+        }
+
         console.log(this.innerText);
         this.classList.add("active");
-
-
-        // Verifica se la posizione corrente è una bomba
-        if (bombPositions.includes(i)) {
-            newElement.classList.add("bomb");
-        }
+        this.removeEventListener("click", removeClick);
     });
 
-
-
     // Aggiungere l'elemento alla griglia
+
     gridElement.append(newElement);
 }
 
@@ -72,11 +104,6 @@ function getGridSize(userChoice) {
     } else {
         return 100;
     }
-}
-
-function generateRandomNumber(maxNumber) {
-    // Generare un numero casuale compreso tra 1 e maxNumber
-    return Math.floor(Math.random() * maxNumber) + 1;
 }
 
 function getRandomNumbersArray(gridSize) {
@@ -93,27 +120,46 @@ function getRandomNumbersArray(gridSize) {
     return numbersArray;
 }
 
-const bomb = getGenerateRandomBomb();
-console.log(bomb)
-function generateRandomBomb() {
-    return Math.floor(Math.random() * 16) + 1;
-}
 
-function getGenerateRandomBomb() {
-    const arrayBombs = [];
-    // console.log(arrayBombs)
-
-    while (arrayBombs.length < 16) {
-        const numberBomb = generateRandomBomb();
-
-        if (!arrayBombs.includes(numberBomb)) {
-            arrayBombs.push(numberBomb);
+function generateBombPositions(gridSize, numBombs) {
+    const bombPositions = [];
+    while (bombPositions.length < numBombs) {
+        const position = generateRandomBombPosition(gridSize);
+        if (!bombPositions.includes(position)) {
+            bombPositions.push(position);
         }
     }
-
-    return arrayBombs;
-
+    return bombPositions;
 }
+
+function generateRandomBombPosition(gridSize) {
+    return Math.floor(Math.random() * gridSize);
+}
+
+// Funzione per generare un numero casuale compreso tra 1 e maxNumber
+function generateRandomNumber(maxNumber) {
+    return Math.floor(Math.random() * maxNumber) + 1;
+}
+// posizioni delle bombe livello easy
+const gridEasy = 100;
+const numbersEasy = 16;
+const bombPositionsLevelEasy = generateBombPositions(gridEasy, numbersEasy);
+console.log("Bombe per livello easy:", bombPositionsLevelEasy);
+
+// posizioni delle bombe livello medium
+const gridMedium = 81;
+const numbersMedium = 16;
+const bombPositionsLevelMedium = generateBombPositions(gridMedium, numbersMedium);
+console.log("Bombe per livello medium:", bombPositionsLevelMedium);
+
+//posizioni delle bombe livello hard
+const gridHard = 49;
+const numbersHard = 16;
+const bombPositionsLevelHard = generateBombPositions(gridHard, numbersHard);
+console.log("Bombe per livello hard:", bombPositionsLevelHard);
+
+
+
 
 
 

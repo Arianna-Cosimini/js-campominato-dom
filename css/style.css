@@ -55,8 +55,9 @@
 }
 
 .bomb{
-    background-color: #fff;
+    background-color: rebeccapurple;
 }
+
 
 
 @media screen and (min-width:0px) and (max-width:574px) {
