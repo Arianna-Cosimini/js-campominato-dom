@@ -54,6 +54,10 @@
     font-size: 20px;
 }
 
+.bomb{
+    background-color: #fff;
+}
+
 
 @media screen and (min-width:0px) and (max-width:574px) {
     .hard {

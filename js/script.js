@@ -19,13 +19,17 @@ myButton.addEventListener("click", function () {
     // Generare un array di numeri casuali per riempire la griglia
     const randomNumbersArray = getRandomNumbersArray(gridSize);
 
+    // Array con le posizioni delle bombe
+    const bombPositions = getGenerateRandomBomb();
+
+
     // Creare e aggiungere gli elementi della griglia al DOM
     for (let i = 0; i < gridSize; i++) {
-        newClass(gridElement, randomNumbersArray, i, userChoice);
+        newClass(gridElement, randomNumbersArray, i, userChoice, bombPositions);
     }
 });
 
-function newClass(gridElement, randomNumbersArray, i, userChoice) {
+function newClass(gridElement, randomNumbersArray, i, userChoice, bombPositions) {
     const newElement = document.createElement("div");
     newElement.classList.add("square");
     newElement.innerText = randomNumbersArray[i];
@@ -39,11 +43,21 @@ function newClass(gridElement, randomNumbersArray, i, userChoice) {
         newElement.classList.add("easy");
     }
 
+
+
     // Aggiungere un event listener per il clic dell'utente
     newElement.addEventListener("click", function () {
-        console.log(this);
-        this.classList.toggle("active");
+        console.log(this.innerText);
+        this.classList.add("active");
+
+
+        // Verifica se la posizione corrente è una bomba
+        if (bombPositions.includes(i)) {
+            newElement.classList.add("bomb");
+        }
     });
+
+
 
     // Aggiungere l'elemento alla griglia
     gridElement.append(newElement);
@@ -68,7 +82,7 @@ function generateRandomNumber(maxNumber) {
 function getRandomNumbersArray(gridSize) {
     const numbersArray = [];
 
-    // Riempire l'array con numeri casuali unici
+    // Riempire l'array con numeri casuali
     while (numbersArray.length < gridSize) {
         const newNumber = generateRandomNumber(gridSize);
         if (!numbersArray.includes(newNumber)) {
@@ -78,4 +92,29 @@ function getRandomNumbersArray(gridSize) {
 
     return numbersArray;
 }
+
+const bomb = getGenerateRandomBomb();
+console.log(bomb)
+function generateRandomBomb() {
+    return Math.floor(Math.random() * 16) + 1;
+}
+
+function getGenerateRandomBomb() {
+    const arrayBombs = [];
+    // console.log(arrayBombs)
+
+    while (arrayBombs.length < 16) {
+        const numberBomb = generateRandomBomb();
+
+        if (!arrayBombs.includes(numberBomb)) {
+            arrayBombs.push(numberBomb);
+        }
+    }
+
+    return arrayBombs;
+
+}
+
+
+
 
